@@ -1,0 +1,1438 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "sonar-reasoning-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.strict_character }}\n\n{{ $json.definite1 }}1{{ $json.definite2 }}\n\n{{ $json.strict_tone }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -608
+      ],
+      "id": "10910d8f-a53d-42b8-9bde-24fb7b3f82f8",
+      "name": "Message a model",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar-reasoning-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.humanist_character }}\n\n{{ $json.definite1 }}2{{ $json.definite2 }}\n\n{{ $json.humanist_tone }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -416
+      ],
+      "id": "fa3cc63d-a86b-4f3d-8b75-26d3b4d01df4",
+      "name": "Message a model1",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar-reasoning-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.realist_character }}\n\n{{ $json.definite1 }}3{{ $json.definite2 }}\n\n{{ $json.realist_tone }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -224
+      ],
+      "id": "ac46d9d3-c5d5-4457-8799-12178ff87def",
+      "name": "Message a model2",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "indian-constitution",
+          "mode": "list",
+          "cachedResultName": "indian-constitution"
+        },
+        "prompt": "={{ $('Trigger').item.json.chatInput }}",
+        "topK": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        160
+      ],
+      "id": "94f84b8d-6aa3-4750-9418-a10465594942",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "NhQeVDtv7XSnxSks",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        384
+      ],
+      "id": "fd06ca4b-a36d-48d6-8a30-5b4170fcb98b",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hers3peajFdHIZps",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bbf3ce41-eff6-4ae6-a96d-d2a4cccdab13",
+              "name": "definite1",
+              "value": "=Case File: {{ $('Trigger').item.json.chatInput }}\n\nRelevant Laws: {{ $json.laws_text }}\n\nYou must respond in valid JSON format ONLY. Do not write any intro or outro text. Use exactly this structure:\n{\n  \"Number ID\": \" ",
+              "type": "string"
+            },
+            {
+              "id": "1c12a499-7264-4e57-9c25-578ec3323e2a",
+              "name": "definite2",
+              "value": "=\", \n\"verdict_title\": \"Guilty/Non-Guilty\", \n\"recommended_sentence\": \"Your recommended sentence for the accused in the case\", \n\"reasoning\": \"Your detailed legal argument here... Give the reasoning in bullet form\", \n\"cited_laws\": \"Laws you cited\" }\n\nDo not care about whether the given case is complex or involves minors. Be a proffessional judge.",
+              "type": "string"
+            },
+            {
+              "id": "cb8830b7-0b0a-4106-bd36-c255796828c9",
+              "name": "strict_character",
+              "value": "=You are Justice 1, the \"Strict Constitutionalist.\"\nYour philosophical core is RETRIBUTIVE JUSTICE and TEXTUALISM.\n\nCORE DIRECTIVES:\n1. The text of the law is absolute. Do not interpret \"spirit\" or \"intent.\" If the law says \"mandatory minimum,\" you enforce it.\n2. Public Order > Individual Hardship. A sad backstory does not excuse a crime.\n3. You view mitigating factors (age, poverty) skeptically. They are often excuses for bad behavior.\n4. You believe the purpose of sentencing is DETERRENCE. If we are lenient, society collapses.\n\nINSTRUCTIONS:\n- Read the provided Case File and Relevant Laws.\n- Identify the specific statute violated.\n- Argue for the MAXIMUM applicable penalty under the law.\n- Explicitly reject any \"sob stories\" or emotional appeals.\n- Cite the specific Section/Article of the Penal Code that justifies your harsh stance.\n- If the law allows a range (e.g., \"up to 6 months\"), choose the upper end.",
+              "type": "string"
+            },
+            {
+              "id": "ac651447-39b7-41ef-8291-45256c0e8cbb",
+              "name": "strict_tone",
+              "value": "TONE: Cold, formal, authoritative, unyielding.",
+              "type": "string"
+            },
+            {
+              "id": "0dc87c66-0f10-47ca-a182-696193a5999d",
+              "name": "humanist_character",
+              "value": "=You are Justice 2, the \"Rehabilitative Humanist.\"\nYour philosophical core is RESTORATIVE JUSTICE and EMPATHY.\n\nCORE DIRECTIVES:\n1. The purpose of law is to fix broken people, not just punish them.\n2. You obsess over \"Mitigating Circumstances\" (age, poverty, mental state). These are not excuses; they are the context of the crime.\n3. Prison is a failure of the state. Always seek alternatives: probation, community service, counseling.\n4. You believe strict laws are often unjust. If a law feels too harsh, look for legal loopholes or exceptions (like \"judicial discretion\") to lower the sentence.\n\nINSTRUCTIONS:\n- Read the provided Case File and Relevant Laws.\n- Highlight the human factors: Is the defendant young? Hungry? Desperate?\n- Argue for the MINIMUM penalty or a SUSPENDED sentence.\n- Cite the specific \"Mitigating Circumstances\" section of the law.\n- Attack the \"Strict Judge\" for being cruel and short-sighted.",
+              "type": "string"
+            },
+            {
+              "id": "206ebf04-5ff7-4bdd-abdc-61fbd614be9d",
+              "name": "humanist_tone",
+              "value": "TONE: Passionate, empathetic, persuasive, slightly rebellious against the system.",
+              "type": "string"
+            },
+            {
+              "id": "0fcb3346-c957-4035-a73d-84d753a4f246",
+              "name": "realist_character",
+              "value": "=You are Justice 3, the \"Pragmatic Realist.\"\nYour philosophical core is UTILITARIANISM and EFFICIENCY.\n\nCORE DIRECTIVES:\n1. You care about what WORKS. Does prison actually stop crime? Or does it just cost taxpayers money?\n2. You balance Public Safety vs. State Resources. Locking up a petty thief costs $50,000/year. Is it worth it?\n3. You act as the mediator. If Justice 1 is too harsh and Justice 2 is too soft, you find the sensible middle ground.\n4. You focus on Recidivism. If this is a first offense, be lenient. If they are a repeat offender, lock them up to save us the hassle.\n\nINSTRUCTIONS:\n- Read the provided Case File and Relevant Laws.\n- Analyze the cost/benefit of the proposed sentences.\n- Look for a \"Plea Deal\" or compromise (e.g., Short jail time + long probation).\n- Acknowledge the validity of both the Strict and Humanist arguments, but propose a practical solution that satisfies the community without bankrupting the state.",
+              "type": "string"
+            },
+            {
+              "id": "d5fa7344-bc98-497a-ab30-d7d766a7ca8d",
+              "name": "realist_tone",
+              "value": "TONE: Calm, logical, weary, practical.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "ee5efa13-a4f0-4cd5-9aa5-c0f54d614144",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "document.pageContent"
+            },
+            {
+              "fieldToAggregate": "score"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        160
+      ],
+      "id": "2ddb8a5e-6742-47a9-8f57-fc49f5646e2b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.strict_character }}\n\n{{ $json.definite1 }}4{{ $json.definite2 }}\n\n{{ $json.strict_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "9c57462e-6dde-462b-8386-2823f20f6f09",
+      "name": "2.5 Flash 4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.humanist_character }}\n\n{{ $json.definite1 }}5{{ $json.definite2 }}\n\n{{ $json.humanist_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        160
+      ],
+      "id": "eac48996-f504-4144-9002-01826fc53057",
+      "name": "2.5 Flash 5",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.realist_character }}\n\n{{ $json.definite1 }}6{{ $json.definite2 }}\n\n{{ $json.realist_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        352
+      ],
+      "id": "13837d75-a0c4-49fd-b621-f4786c978b36",
+      "name": "2.5 Flash 6",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.humanist_character }}\n\n{{ $json.definite1 }}8{{ $json.definite2 }}\n\n{{ $json.humanist_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        736
+      ],
+      "id": "c7b3d88c-9768-43b7-b2a2-ca12f52b7344",
+      "name": "2.5 Pro 8",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.realist_character }}\n\n{{ $json.definite1 }}9{{ $json.definite2 }}\n\n{{ $json.realist_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        928
+      ],
+      "id": "9063c2f9-662a-450a-a317-3748c50b7f18",
+      "name": "2.5 Pro 9",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "=We have found {{ $('Code in Python (Beta)4').item.json['Number of solutions'] }} possible solution(s) for the given case.\n\nThese are the solutions:\n{{ $json.formatted_output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        3984,
+        160
+      ],
+      "id": "236cae5f-471f-4682-aff8-b86e58d44eff",
+      "name": "Respond to Chat1"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Get the lists from the FIRST item (since Aggregate merges everything into one)\ninput_json = _input.first().json\n\n# Access the arrays\n# Make sure your Aggregate node actually named them \"pageContent\" and \"score\"\ncontents = input_json['pageContent']\nscores = input_json['score']\n\nMIN_SCORE = 0.50\n\n# Filter logic: Zip them together, check score, keep content\nrelevant_texts = [\n    content for content, score in zip(contents, scores)\n    if score >= MIN_SCORE\n]\n\n# Handle Empty Case\nif not relevant_texts:\n    return [{\n        \"json\": {\n            \"found_laws\": False,\n            \"laws_text\": contents[:10]\n        }\n    }]\n\n# Combine them into one big string for the LLM\ncombined_text = \"\\n---\\n\".join(relevant_texts)\n\n# Return standard n8n format\nreturn [{\n    \"json\": {\n        \"found_laws\": True,\n        \"laws_text\": combined_text\n    }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        160
+      ],
+      "id": "03c43bc8-7b1b-4dfd-b509-884e7e015bc9",
+      "name": "Code in Python (Beta)"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "isRelevant = \"\"\n\nif(_('Code in Python (Beta)').first().json.found_laws == False): \n  isRelevant = 'Laws related to the case (They may or may not be really relevant to the case file. Do not hallucinate.):'\nelse:\n  isRelevant = 'Relevant laws:'\n\nreturn {\"isRelevant\": isRelevant}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        160
+      ],
+      "id": "b2bbfff9-fa14-495f-86d4-19ebb7dea2e2",
+      "name": "Code in Python (Beta)1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        -432
+      ],
+      "id": "f5853488-d7aa-4f4f-b1d6-f7ceefb49bb9",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -416
+      ],
+      "id": "ca888141-b568-4d62-895c-471e8509953e",
+      "name": "Sentencing Perplexity"
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        384
+      ],
+      "id": "03a15d7b-1d71-4cde-9a34-8c00b50454d7",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content.parts[0].text",
+              "renameField": true,
+              "outputFieldName": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        448
+      ],
+      "id": "59cd6fba-e289-4927-ab76-517f6a1bbc5b",
+      "name": "Sentencing Perplexity1"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "verdicts = _('Sentencing Perplexity').first().json.message + _('Sentencing Perplexity1').first().json.message\n\nreturn {\"messages\": verdicts}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        160
+      ],
+      "id": "0c636c43-9349-4607-86e8-74358f8b18be",
+      "name": "Code in Python (Beta)2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        160
+      ],
+      "id": "fa09c86f-5670-42cc-80ad-05caa1fb366e",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1328,
+        160
+      ],
+      "id": "7bd19f9a-0617-49ba-8ac3-98e556101ecc",
+      "name": "Trigger",
+      "webhookId": "0634a334-1ac4-45c1-966a-3d2b42b456fb"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "17ee0bcb-d173-410c-9290-de14f3abaf26",
+              "name": "case_file",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1104,
+        160
+      ],
+      "id": "56e9028d-5c33-48c3-a983-bb446a6f7dcb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.prompt_final }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        -320
+      ],
+      "id": "2999ee94-1e01-4cf1-a9f9-40f712abfab2",
+      "name": "Message a model4",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar-reasoning-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.prompt_final }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        -128
+      ],
+      "id": "8c3ae4b2-cf1a-445c-8ade-66ffe9267a1d",
+      "name": "Message a model5",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar-reasoning-pro",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.prompt_final }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        64
+      ],
+      "id": "c6ad5e15-b2f4-458b-aa28-42f5d00636a5",
+      "name": "Message a model6",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.prompt_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        256
+      ],
+      "id": "65bc30ff-04b5-452b-ba19-ee69d891a686",
+      "name": "2.5 Flash ",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.prompt_final }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        448
+      ],
+      "id": "cb28277e-c6b0-4c8b-87b2-9f4e15e5ecee",
+      "name": "2.5 Pro ",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ab83719-644c-4fda-b124-d456d26fbe25",
+              "name": "prompt_final",
+              "value": "=You are the chief justice of a court. These are the proposed sentences for the below Case File. Your job is to comprehend the proposed sentences, their reasonings and, in your opinion, then arrange the return the arranged \"Number\" of the verdicts from the most reasonable to the least reasonable. If any of the votes contain some reason why the 'votes' we not donw, ignore it.\n\nCase File:\n{{ $('Trigger').first().json.chatInput }}\n\nProposed sentences:\n{{ $('Code in Python (Beta)2').first().json.messages }}\n\nOutput format:\n[Numbers of the respective proposed statements from the most reasonable to the least reasonable sperate by commas]\nExample: [2, 5, 1, 8, 6, 7, 3, 4, 9]\n\nOutput only the numbers. Do not give any reasonings or anything else. Only the numbers of the verdicts arranged from the \"Most Reasonable\" to \"Least Reasonable\" enclosed in square brackets and seperated by comma. DO NOT THINK. JUST GIVE THE NUMBERS.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        160
+      ],
+      "id": "48b7ed0b-6178-420a-8727-9049516cc9be",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "=There was recently a vote held and 9 different parties arranged the proposed solutions by their number from the most reasonable to the most unreasonable.\n\nYour task is to output the most frequently repeated number as the most reasonable solution (i.e. in the first position of the vote)\n\nIf there are more than one numbers which were repeated the exact same time, then output all of those numbers which were the most repeated.\n\nFormat of the output:\n{\"Number of solution\": number of the most frequently repeated solutions, \"Solutions\": [Numbers of the most frequently repeated solution]}\nExample:\n{\"Number of solution\": 1, \"Solutions\": [5]}\n{\"Number of solution\": 3, \"Solutions\": [3,5,7]}\n\nDo not give any other text, reasonings or use markdown. just give me the plain text.\n\nIf it is a serious crime and you wish not to answer, structure your output as:\n{\"Number of solutions\": \"Aborted\", \"Solutions\": \"Reason for not answering\"}\n\nThe different arrangements of the solution:\n{{ $json.arrangements }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        3312,
+        160
+      ],
+      "id": "1baf69ce-e962-4bf2-8083-8f27afdd72d8",
+      "name": "Message a model7",
+      "credentials": {
+        "perplexityApi": {
+          "id": "NhCc9jZCkgLOWocM",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2192,
+        -144
+      ],
+      "id": "9f135b0f-f6b0-4fd1-af97-6cd6ce2addeb",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2416,
+        -128
+      ],
+      "id": "52260a9f-29d8-46a3-82f9-5751cbe22e33",
+      "name": "Sentencing Perplexity2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2192,
+        352
+      ],
+      "id": "8745a0c6-8947-4086-a754-04f0834c38bd",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content.parts[0].text",
+              "renameField": true,
+              "outputFieldName": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2416,
+        352
+      ],
+      "id": "148810df-6dab-4bca-b057-df993eabbc2d",
+      "name": "Sentencing Perplexity3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2640,
+        160
+      ],
+      "id": "1351c9b1-7663-4611-b617-5b4ada683779",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "arrangement = _('Sentencing Perplexity2').first().json.message + _('Sentencing Perplexity3').first().json.message\n\nreturn {\"arrangements\": arrangement}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3088,
+        160
+      ],
+      "id": "057f33e9-8320-439b-a5f7-edef6759b8c0",
+      "name": "Code in Python (Beta)3"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\nimport json\n\n# Get the input item once\ninput_data = _input.first().json\nnum_solutions = input_data['Number of solutions']\nsolutions_list = input_data['Solutions']\n\ns = \"\"\n\nfor i in range(num_solutions):\n    ai_output = solutions_list[i]\n    \n    clean_text = ai_output.strip()\n    if clean_text.startswith(\"```\"):\n        clean_text = clean_text[7:]\n    elif clean_text.startswith(\"```\"):\n        clean_text = clean_text[3:]\n    if clean_text.endswith(\"```\"):\n        clean_text = clean_text[:-3]\n        \n    clean_text = clean_text.strip()\n    \n    try:\n        data = json.loads(clean_text)\n        s += \"Idea number: \" + str(i+1) + \"\\n\"\n        s += \"Verdict: \" + str(data.get(\"verdict_title\", \"N/A\")) + \"\\n\"\n        s += \"Recommended Sentence: \" + str(data.get(\"recommended_sentence\", \"N/A\")) + \"\\n\"\n        s += \"Reasoning behind the verdict: \" + str(data.get(\"reasoning\", \"N/A\")) + \"\\n\\n\"\n    except json.JSONDecodeError:\n        s += \"Idea number: \" + str(i+1) + \" (Error parsing JSON)\\n\\n\"\n\nreturn [{\n    \"json\": {\n        \"formatted_output\": s\n    }\n}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        160
+      ],
+      "id": "1ca6f6dc-c6fa-4c51-be4b-9f78fc06c873",
+      "name": "Code in Python (Beta)5"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\nimport json\n\n# 1. Get the messy output from the AI Model\nai_output = _input.first().json.choices[0].message.content\n\n# 2. Define the Regex pattern to find the JSON block\n# This looks for the first '{' and captures everything up to the last '}'\njson_pattern = r\"\\{[\\s\\S]*\\}\"\n\n# 3. Find the match\nmatch = re.search(json_pattern, ai_output)\n\nif match:\n    clean_json_string = match.group(0)\n\n    # 4. Convert string to Dictionary\n    result_dict = json.loads(clean_json_string)\nelse:\n    # Fallback if no curly braces were found\n    return {'error': 'No JSON found in output', 'raw_output': ai_output}\n\nactualarrangements = result_dict\narr1 = []\nfor i in range(actualarrangements[\"Number of solution\"]):\n  arr1.append(_('Code in Python (Beta)2').first().json.messages[actualarrangements[\"Solutions\"][i] - 1])\n\nreturn {\"Number of solutions\": actualarrangements[\"Number of solution\"], \"Solutions\": arr1}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3536,
+        160
+      ],
+      "id": "aa67b632-9df1-4c28-b9b9-22c587712f90",
+      "name": "Code in Python (Beta)4"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.strict_character }}\n\n{{ $json.definite1 }}7{{ $json.definite2 }}\n\n{{ $json.strict_tone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        544
+      ],
+      "id": "b949a54d-eca5-4387-8002-9e7f05b3b02f",
+      "name": "2.5 Pro 7",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "css9pT56ZsB6cUAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2864,
+        160
+      ],
+      "id": "6d6b4ef8-2505-4eb6-9404-d9a490b4b551",
+      "name": "Aggregate1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Flash 4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Flash 5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Flash 6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Pro 8",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Pro 9",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Pro 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash 4": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash 5": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "2.5 Flash 6": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "2.5 Pro 8": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "2.5 Pro 9": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Sentencing Perplexity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Sentencing Perplexity1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentencing Perplexity": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentencing Perplexity1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)2": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Message a model4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Flash ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2.5 Pro ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model4": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model5": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Message a model6": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "2.5 Flash ": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Pro ": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Sentencing Perplexity2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentencing Perplexity2": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Sentencing Perplexity3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentencing Perplexity3": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)3": {
+      "main": [
+        [
+          {
+            "node": "Message a model7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model7": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)5": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Chat1": {
+      "main": [
+        []
+      ]
+    },
+    "Code in Python (Beta)4": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Pro 7": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "390eacad-9e5d-4413-9b3a-d9135fdd3c55",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92fa8895077a385578acdbb23fcd9b92c409ad695d8aa627e4481643666855ed"
+  },
+  "id": "gWUda8bM9LEJdhRE",
+  "tags": []
+}
