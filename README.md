@@ -34,7 +34,7 @@ The following components are required for execution:
 ## Installation and Configuration
 
 1.  **Import Workflow**:
-    - Obtain the JSON file from this repository.
+    - Obtain the JSON file (workflow1.json) from this repository.
     - In n8n, navigate to **Workflows** > **Import from File** and select the file.
 2.  **Credential Configuration**:
     - Access the imported workflow.
